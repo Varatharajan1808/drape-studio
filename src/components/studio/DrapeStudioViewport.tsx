@@ -1,86 +1,126 @@
 // ─────────────────────────────────────────────────────────────
-// Drape Studio — 3D Viewport (Integration Boundary)
+// Drape Studio — 3D Viewport (Engine Integration Boundary)
+// ─────────────────────────────────────────────────────────────
+//
+// Mounts the existing custom WebGL 3D engine via DrapeEngineAdapter.
+// Exposes camera controls (Front, Back, Left, Right, Reset)
+// while keeping React decoupled from GPU rendering details.
 // ─────────────────────────────────────────────────────────────
 
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 import type { DrapeStudioViewportProps } from '../../types/studio';
+import { DrapeEngineAdapter, type CameraPreset } from '../../engine/DrapeEngineAdapter';
 import './DrapeStudioViewport.css';
-
-function SareeSilhouette() {
-  return (
-    <div className="ds-viewport__silhouette">
-      <svg viewBox="0 0 120 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        {/* Head */}
-        <ellipse cx="60" cy="22" rx="12" ry="14" stroke="currentColor" strokeWidth="1.2" />
-        {/* Neck */}
-        <line x1="60" y1="36" x2="60" y2="46" stroke="currentColor" strokeWidth="1.2" />
-        {/* Shoulders */}
-        <path d="M60 46 C60 46, 38 48, 30 56" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-        <path d="M60 46 C60 46, 82 48, 90 56" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-        {/* Torso / blouse */}
-        <path d="M30 56 L28 90 Q28 92 30 92 L50 94" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-        <path d="M90 56 L92 90 Q92 92 90 92 L70 94" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-        {/* Waist */}
-        <path d="M50 94 Q60 96 70 94" stroke="currentColor" strokeWidth="1" />
-        {/* Saree drape — flowing curves */}
-        <path
-          d="M50 94 C46 110, 32 130, 28 155 Q26 170, 34 185 L86 185 Q94 170, 92 155 C88 130, 74 110, 70 94"
-          stroke="currentColor"
-          strokeWidth="1.2"
-          strokeLinecap="round"
-        />
-        {/* Pallu drape over shoulder */}
-        <path
-          d="M90 56 C94 60, 98 70, 96 82 Q94 90, 86 96 C78 102, 60 105, 54 110"
-          stroke="currentColor"
-          strokeWidth="1"
-          strokeLinecap="round"
-          strokeDasharray="3 2"
-          opacity="0.6"
-        />
-        {/* Saree pleats */}
-        <path d="M48 140 L52 185" stroke="currentColor" strokeWidth="0.6" opacity="0.4" />
-        <path d="M54 138 L56 185" stroke="currentColor" strokeWidth="0.6" opacity="0.3" />
-        <path d="M60 136 L60 185" stroke="currentColor" strokeWidth="0.6" opacity="0.4" />
-        <path d="M66 138 L64 185" stroke="currentColor" strokeWidth="0.6" opacity="0.3" />
-        <path d="M72 140 L68 185" stroke="currentColor" strokeWidth="0.6" opacity="0.4" />
-        {/* Floor line */}
-        <line x1="28" y1="185" x2="92" y2="185" stroke="currentColor" strokeWidth="0.8" opacity="0.3" />
-      </svg>
-    </div>
-  );
-}
 
 export function DrapeStudioViewport({ onReady, className = '' }: DrapeStudioViewportProps) {
   const engineMountRef = useRef<HTMLDivElement>(null);
+  const adapterRef = useRef<DrapeEngineAdapter | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
+  // Initialize engine on mount
   useEffect(() => {
-    if (engineMountRef.current && onReady) {
-      onReady();
+    let isSubscribed = true;
+
+    if (engineMountRef.current && !adapterRef.current) {
+      const adapter = new DrapeEngineAdapter();
+      adapterRef.current = adapter;
+
+      adapter
+        .initialize(engineMountRef.current, {
+          onLoaded: () => {
+            if (isSubscribed) {
+              setIsLoading(false);
+              if (onReady) onReady();
+            }
+          },
+        })
+        .catch(err => {
+          console.warn('3D Studio Engine Initialization:', err);
+          if (isSubscribed) {
+            setIsLoading(false);
+          }
+        });
     }
+
+    // Clean up on unmount
+    return () => {
+      isSubscribed = false;
+      if (adapterRef.current) {
+        adapterRef.current.dispose();
+        adapterRef.current = null;
+      }
+    };
   }, [onReady]);
+
+  // Camera preset handlers
+  const handlePreset = useCallback((preset: CameraPreset) => {
+    if (adapterRef.current) {
+      adapterRef.current.setCameraPreset(preset);
+    }
+  }, []);
+
+  const handleReset = useCallback(() => {
+    if (adapterRef.current) {
+      adapterRef.current.resetCamera();
+    }
+  }, []);
 
   return (
     <div className={`ds-viewport ds-animate-fade-in ${className}`.trim()}>
+      {/* 3D Engine Mount Point */}
       <div ref={engineMountRef} className="ds-viewport__engine-mount" />
 
-      <div className="ds-viewport__stage">
-        <div className="ds-viewport__corner ds-viewport__corner--tl" />
-        <div className="ds-viewport__corner ds-viewport__corner--tr" />
-        <div className="ds-viewport__corner ds-viewport__corner--bl" />
-        <div className="ds-viewport__corner ds-viewport__corner--br" />
+      {/* Showroom Corner Framing Accents */}
+      <div className="ds-viewport__corner ds-viewport__corner--tl" />
+      <div className="ds-viewport__corner ds-viewport__corner--tr" />
+      <div className="ds-viewport__corner ds-viewport__corner--bl" />
+      <div className="ds-viewport__corner ds-viewport__corner--br" />
 
-        <div className="ds-viewport__content">
-          <SareeSilhouette />
-          <h2 className="ds-viewport__title">3D Saree Preview</h2>
-          <p className="ds-viewport__subtitle">
-            Your interactive saree experience will appear here
-          </p>
-        </div>
-
-        <div className="ds-viewport__shimmer" />
+      {/* Floating Camera Preset Controls */}
+      <div className="ds-viewport__presets" aria-label="Camera presets">
+        <button
+          type="button"
+          className="ds-viewport__preset-btn"
+          onClick={() => handlePreset('front')}
+          title="Front View"
+        >
+          Front
+        </button>
+        <button
+          type="button"
+          className="ds-viewport__preset-btn"
+          onClick={() => handlePreset('back')}
+          title="Back View"
+        >
+          Back
+        </button>
+        <button
+          type="button"
+          className="ds-viewport__preset-btn"
+          onClick={() => handlePreset('left')}
+          title="Left View"
+        >
+          Left
+        </button>
+        <button
+          type="button"
+          className="ds-viewport__preset-btn"
+          onClick={() => handlePreset('right')}
+          title="Right View"
+        >
+          Right
+        </button>
+        <button
+          type="button"
+          className="ds-viewport__preset-btn ds-viewport__preset-btn--reset"
+          onClick={handleReset}
+          title="Reset View"
+        >
+          Reset
+        </button>
       </div>
 
+      {/* Interaction Hints Overlay */}
       <div className="ds-viewport__hints">
         <span className="ds-viewport__hint">
           <span className="ds-viewport__hint-icon" aria-hidden="true">↔</span>
@@ -91,6 +131,14 @@ export function DrapeStudioViewport({ onReady, className = '' }: DrapeStudioView
           Scroll to zoom
         </span>
       </div>
+
+      {/* Polished Loading State Overlay */}
+      {isLoading && (
+        <div className="ds-viewport__loading">
+          <div className="ds-viewport__loading-spinner" />
+          <p className="ds-viewport__loading-text">Preparing your 3D studio...</p>
+        </div>
+      )}
     </div>
   );
 }
