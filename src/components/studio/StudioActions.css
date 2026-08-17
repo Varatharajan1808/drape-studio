@@ -1,0 +1,52 @@
+/* ─────────────────────────────────────────────────────────────
+   Drape Studio — Studio Actions
+   ───────────────────────────────────────────────────────────── */
+
+.ds-studio-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ds-space-4);
+  padding: var(--ds-space-6) 0;
+  border-top: 1px solid var(--ds-border);
+}
+
+@media (max-width: 767px) {
+  .ds-studio-actions {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: var(--ds-space-4) var(--ds-space-5);
+    background-color: var(--ds-bg-overlay);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid var(--ds-border);
+    z-index: 50;
+    margin: 0 calc(-1 * var(--ds-space-5));
+  }
+}
+
+.ds-studio-actions__left {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-3);
+}
+
+.ds-studio-actions__right {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-3);
+}
+
+/* ── Arrow icon ────────────────────────────────────────────── */
+
+.ds-studio-actions__arrow {
+  display: inline-flex;
+  margin-left: var(--ds-space-1);
+  transition: transform var(--ds-duration-fast) var(--ds-ease);
+}
+
+.ds-button:hover .ds-studio-actions__arrow {
+  transform: translateX(2px);
+}

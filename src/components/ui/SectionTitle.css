@@ -1,0 +1,24 @@
+/* ─────────────────────────────────────────────────────────────
+   Drape Studio — Section Title
+   ───────────────────────────────────────────────────────────── */
+
+.ds-section-title {
+  margin-bottom: var(--ds-space-5);
+}
+
+.ds-section-title__heading {
+  font-family: var(--ds-font-display);
+  font-size: var(--ds-text-xs);
+  font-weight: 600;
+  letter-spacing: var(--ds-tracking-widest);
+  text-transform: uppercase;
+  color: var(--ds-text-secondary);
+  margin-bottom: var(--ds-space-1);
+}
+
+.ds-section-title__subtitle {
+  font-family: var(--ds-font-body);
+  font-size: var(--ds-text-sm);
+  font-weight: 300;
+  color: var(--ds-text-tertiary);
+}

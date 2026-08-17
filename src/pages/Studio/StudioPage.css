@@ -1,0 +1,31 @@
+/* ─────────────────────────────────────────────────────────────
+   Drape Studio — Studio Page
+   ───────────────────────────────────────────────────────────── */
+
+.ds-studio-page {
+  padding-bottom: var(--ds-space-16);
+}
+
+/* ── Viewport Section ──────────────────────────────────────── */
+
+.ds-studio-page__viewport {
+  padding: var(--ds-space-6) 0;
+}
+
+@media (min-width: 768px) {
+  .ds-studio-page__viewport {
+    padding: var(--ds-space-8) 0;
+  }
+}
+
+/* ── Customization Section ─────────────────────────────────── */
+
+.ds-studio-page__customization {
+  /* section spacing handled by CustomizationPanel.css */
+}
+
+/* ── Actions Section ───────────────────────────────────────── */
+
+.ds-studio-page__actions {
+  margin-top: var(--ds-space-4);
+}

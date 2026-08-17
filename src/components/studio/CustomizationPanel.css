@@ -1,0 +1,92 @@
+/* ─────────────────────────────────────────────────────────────
+   Drape Studio — Customization Panel
+   ───────────────────────────────────────────────────────────── */
+
+.ds-customization {
+  padding: var(--ds-space-8) 0;
+}
+
+.ds-customization__header {
+  margin-bottom: var(--ds-space-8);
+}
+
+.ds-customization__heading {
+  font-family: var(--ds-font-display);
+  font-size: var(--ds-text-xl);
+  font-weight: 500;
+  color: var(--ds-text-primary);
+  margin-bottom: var(--ds-space-1);
+}
+
+.ds-customization__subheading {
+  font-family: var(--ds-font-body);
+  font-size: var(--ds-text-sm);
+  font-weight: 300;
+  color: var(--ds-text-tertiary);
+}
+
+.ds-customization__divider {
+  width: 40px;
+  height: 1.5px;
+  background-color: var(--ds-gold);
+  margin-top: var(--ds-space-4);
+  border: none;
+}
+
+.ds-customization__sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-10);
+}
+
+/* ── Mobile Accordion ──────────────────────────────────────── */
+
+.ds-customization__accordion-toggle {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .ds-customization__accordion-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: var(--ds-space-4) 0;
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--ds-border);
+    cursor: pointer;
+    font-family: var(--ds-font-display);
+    font-size: var(--ds-text-xs);
+    font-weight: 600;
+    letter-spacing: var(--ds-tracking-widest);
+    text-transform: uppercase;
+    color: var(--ds-text-secondary);
+  }
+
+  .ds-customization__accordion-icon {
+    transition: transform var(--ds-duration-fast) var(--ds-ease);
+    color: var(--ds-text-tertiary);
+  }
+
+  .ds-customization__accordion-icon--open {
+    transform: rotate(180deg);
+  }
+
+  .ds-customization__accordion-content {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition:
+      max-height var(--ds-duration-slow) var(--ds-ease),
+      opacity var(--ds-duration-normal) var(--ds-ease),
+      padding var(--ds-duration-normal) var(--ds-ease);
+    padding: 0;
+  }
+
+  .ds-customization__accordion-content--open {
+    max-height: 500px;
+    opacity: 1;
+    padding: var(--ds-space-5) 0;
+  }
+}

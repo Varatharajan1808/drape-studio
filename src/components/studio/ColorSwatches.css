@@ -1,0 +1,111 @@
+/* ─────────────────────────────────────────────────────────────
+   Drape Studio — Color Swatches
+   ───────────────────────────────────────────────────────────── */
+
+.ds-color-swatches__grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-space-4);
+}
+
+.ds-color-swatch {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--ds-radius-full);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition:
+    transform var(--ds-duration-fast) var(--ds-ease),
+    border-color var(--ds-duration-fast) var(--ds-ease),
+    box-shadow var(--ds-duration-fast) var(--ds-ease);
+  padding: 0;
+  background: none;
+  outline-offset: 3px;
+}
+
+.ds-color-swatch__color {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--ds-radius-full);
+  box-shadow: var(--ds-shadow-sm);
+  transition: box-shadow var(--ds-duration-fast) var(--ds-ease);
+}
+
+.ds-color-swatch:hover {
+  transform: scale(1.12);
+}
+
+.ds-color-swatch:hover .ds-color-swatch__color {
+  box-shadow: var(--ds-shadow-md);
+}
+
+/* ── Selected ──────────────────────────────────────────────── */
+
+.ds-color-swatch--selected {
+  border-color: var(--ds-gold);
+  box-shadow: 0 0 0 2px var(--ds-bg-primary), 0 0 0 4px var(--ds-gold);
+}
+
+.ds-color-swatch--selected:hover {
+  transform: scale(1.08);
+}
+
+/* ── Check mark ────────────────────────────────────────────── */
+
+.ds-color-swatch__check {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--ds-radius-full);
+  background-color: var(--ds-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(0.5);
+  transition:
+    opacity var(--ds-duration-fast) var(--ds-ease),
+    transform var(--ds-duration-fast) var(--ds-ease);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.ds-color-swatch--selected .ds-color-swatch__check {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.ds-color-swatch__check-icon {
+  width: 9px;
+  height: 9px;
+  color: white;
+}
+
+/* ── Label ─────────────────────────────────────────────────── */
+
+.ds-color-swatch__label {
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.5625rem;
+  font-weight: 500;
+  letter-spacing: var(--ds-tracking-wide);
+  color: var(--ds-text-tertiary);
+  white-space: nowrap;
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity var(--ds-duration-fast) var(--ds-ease);
+  pointer-events: none;
+}
+
+.ds-color-swatch:hover .ds-color-swatch__label,
+.ds-color-swatch--selected .ds-color-swatch__label {
+  opacity: 1;
+}
+
+.ds-color-swatch--selected .ds-color-swatch__label {
+  color: var(--ds-gold-dark);
+}

@@ -1,0 +1,114 @@
+/* ─────────────────────────────────────────────────────────────
+   Drape Studio — Button
+   ───────────────────────────────────────────────────────────── */
+
+.ds-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ds-space-2);
+  font-family: var(--ds-font-body);
+  font-weight: 500;
+  letter-spacing: var(--ds-tracking-wide);
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  border-radius: var(--ds-radius-sm);
+  cursor: pointer;
+  transition:
+    background-color var(--ds-duration-fast) var(--ds-ease),
+    border-color var(--ds-duration-fast) var(--ds-ease),
+    color var(--ds-duration-fast) var(--ds-ease),
+    transform var(--ds-duration-fast) var(--ds-ease),
+    box-shadow var(--ds-duration-fast) var(--ds-ease);
+  white-space: nowrap;
+  user-select: none;
+}
+
+/* ── Sizes ─────────────────────────────────────────────────── */
+
+.ds-button--sm {
+  font-size: var(--ds-text-xs);
+  padding: var(--ds-space-2) var(--ds-space-4);
+  min-height: 32px;
+}
+
+.ds-button--md {
+  font-size: var(--ds-text-sm);
+  padding: var(--ds-space-3) var(--ds-space-6);
+  min-height: 40px;
+}
+
+.ds-button--lg {
+  font-size: var(--ds-text-sm);
+  padding: var(--ds-space-4) var(--ds-space-8);
+  min-height: 48px;
+}
+
+/* ── Variants ──────────────────────────────────────────────── */
+
+.ds-button--primary {
+  background-color: var(--ds-primary);
+  color: var(--ds-text-inverse);
+  border-color: var(--ds-primary);
+}
+
+.ds-button--primary:hover:not(:disabled) {
+  background-color: var(--ds-primary-light);
+  border-color: var(--ds-primary-light);
+}
+
+.ds-button--primary:active:not(:disabled) {
+  background-color: var(--ds-primary-dark);
+  transform: scale(0.98);
+}
+
+.ds-button--secondary {
+  background-color: transparent;
+  color: var(--ds-text-primary);
+  border-color: var(--ds-border-strong);
+}
+
+.ds-button--secondary:hover:not(:disabled) {
+  border-color: var(--ds-text-primary);
+  background-color: var(--ds-primary-muted);
+}
+
+.ds-button--secondary:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.ds-button--ghost {
+  background-color: transparent;
+  color: var(--ds-text-secondary);
+  border-color: transparent;
+}
+
+.ds-button--ghost:hover:not(:disabled) {
+  color: var(--ds-text-primary);
+  background-color: var(--ds-primary-muted);
+}
+
+/* ── Disabled ──────────────────────────────────────────────── */
+
+.ds-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ── Badge ─────────────────────────────────────────────────── */
+
+.ds-button__badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.5625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 2px 6px;
+  border-radius: var(--ds-radius-full);
+  background-color: var(--ds-gold-muted);
+  color: var(--ds-gold-dark);
+  line-height: 1;
+}

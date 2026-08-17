@@ -1,0 +1,22 @@
+/* ─────────────────────────────────────────────────────────────
+   Drape Studio — Page Container
+   ───────────────────────────────────────────────────────────── */
+
+.ds-page-container {
+  width: 100%;
+  max-width: var(--ds-max-width);
+  margin: 0 auto;
+  padding: 0 var(--ds-space-5);
+}
+
+@media (min-width: 768px) {
+  .ds-page-container {
+    padding: 0 var(--ds-space-8);
+  }
+}
+
+@media (min-width: 1024px) {
+  .ds-page-container {
+    padding: 0 var(--ds-space-10);
+  }
+}
