@@ -24,8 +24,11 @@ export const COLOR_RGB_MAP: Record<string, [number, number, number]> = {
   'royal-blue': [0.15, 0.32, 0.65],
   ruby: [0.62, 0.12, 0.22],
   plum: [0.38, 0.18, 0.42],
-  gold: [0.79, 0.66, 0.30],
-  'dusty-rose': [0.78, 0.53, 0.55],
+  mustard: [0.79, 0.59, 0.18],
+  blush: [0.83, 0.63, 0.63],
+  // Fallbacks
+  gold: [0.79, 0.59, 0.18],
+  'dusty-rose': [0.83, 0.63, 0.63],
 };
 
 // ── Fabric ───────────────────────────────────────────────────

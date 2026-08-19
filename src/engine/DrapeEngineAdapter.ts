@@ -492,19 +492,19 @@ export class DrapeEngineAdapter {
 
     // 3. Update Pallu Tail Accent
     if (this.palluTailMesh) {
-      if (state.selectedPallu === 'zari-rich') {
+      if (state.selectedPallu === 'zari') {
         this.palluTailMesh.material.color = [0.82, 0.70, 0.35];
         this.palluTailMesh.material.metallic = 0.85;
         this.palluTailMesh.material.roughness = 0.2;
-      } else if (state.selectedPallu === 'classic-pleats') {
+      } else if (state.selectedPallu === 'classic') {
         this.palluTailMesh.material.color = bodyColor;
         this.palluTailMesh.material.metallic = fabricPbr.metallic;
         this.palluTailMesh.material.roughness = fabricPbr.roughness;
-      } else if (state.selectedPallu === 'floral-woven') {
+      } else if (state.selectedPallu === 'floral') {
         this.palluTailMesh.material.color = [0.75, 0.45, 0.58];
         this.palluTailMesh.material.metallic = 0.4;
         this.palluTailMesh.material.roughness = 0.3;
-      } else if (state.selectedPallu === 'minimal-hem') {
+      } else if (state.selectedPallu === 'geometric') {
         this.palluTailMesh.material.color = [0.9, 0.86, 0.8];
         this.palluTailMesh.material.metallic = 0.1;
         this.palluTailMesh.material.roughness = 0.5;
@@ -513,21 +513,21 @@ export class DrapeEngineAdapter {
 
     // 4. Update Blouse Garment
     if (this.blouseMesh) {
-      if (state.selectedBlouse === 'contrast-maroon') {
+      if (state.selectedBlouse === 'classic') {
         this.blouseMesh.material.color = [0.42, 0.11, 0.23];
         this.blouseMesh.scale = { x: 1.0, y: 1.0, z: 1.0 };
-      } else if (state.selectedBlouse === 'matching') {
+      } else if (state.selectedBlouse === 'sleeveless') {
         this.blouseMesh.material.color = bodyColor;
-        this.blouseMesh.scale = { x: 1.0, y: 1.0, z: 1.0 };
-      } else if (state.selectedBlouse === 'golden-embroidered') {
+        this.blouseMesh.scale = { x: 0.95, y: 0.9, z: 0.95 };
+      } else if (state.selectedBlouse === 'elbow-sleeve') {
         this.blouseMesh.material.color = [0.78, 0.65, 0.28];
         this.blouseMesh.material.metallic = 0.75;
         this.blouseMesh.scale = { x: 1.02, y: 1.05, z: 1.02 };
-      } else if (state.selectedBlouse === 'velvet-navy') {
+      } else if (state.selectedBlouse === 'full-sleeve') {
         this.blouseMesh.material.color = [0.10, 0.14, 0.35];
         this.blouseMesh.material.metallic = 0.1;
         this.blouseMesh.material.roughness = 0.7;
-        this.blouseMesh.scale = { x: 1.01, y: 1.0, z: 1.01 };
+        this.blouseMesh.scale = { x: 1.05, y: 1.15, z: 1.05 };
       }
       this.blouseMesh.updateScale();
     }
