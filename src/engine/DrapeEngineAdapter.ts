@@ -33,6 +33,13 @@ import {
   PointLightfsSource,
 } from './RenderingPipeline/Shaders/GLSLShaderLibrary.js';
 
+import {
+  type StudioState,
+  COLOR_RGB_MAP,
+  FABRIC_PBR_MAP,
+  BORDER_COLOR_MAP,
+} from '../types/studio.js';
+
 export type CameraPreset = 'front' | 'back' | 'left' | 'right';
 
 export interface DrapeEngineAdapterOptions {
@@ -49,6 +56,14 @@ export class DrapeEngineAdapter {
   private program: WebGLProgram | null = null;
   private animationFrameId: number | null = null;
   private resizeObserver: ResizeObserver | null = null;
+
+  // Dedicated Mesh references for real-time 3D PBR customization
+  private sareeBodyMesh: RenderableMeshObject | null = null;
+  private borderMesh: RenderableMeshObject | null = null;
+  private blouseMesh: RenderableMeshObject | null = null;
+  private palluDrapeMesh: RenderableMeshObject | null = null;
+  private palluTailMesh: RenderableMeshObject | null = null;
+
 
   // Orbit camera control parameters
   private radius = 7.0;
@@ -190,25 +205,6 @@ export class DrapeEngineAdapter {
     const gl = this.webgl.gl;
     const materialFactory = new PBRMaterialProperties();
 
-    // Check if external GLTF drape-model is available in public directory
-    let hasGltfLoaded = false;
-    try {
-      const res = await fetch('/assets/drape-model.glb', { method: 'HEAD' });
-      const contentType = res.headers.get('content-type') || '';
-      if (res.ok && !contentType.includes('text/html')) {
-        const loader = new GLTFAssetLoader(gl, this.scene);
-        await loader.main(['/assets/drape-model.glb']);
-        if (loader.importedMeshes && loader.importedMeshes.length > 0) {
-          this.sareeGroup = loader.importedMeshes;
-          hasGltfLoaded = true;
-        }
-      }
-    } catch {
-      // Proceed to procedural 3D Saree Showroom model
-    }
-
-    if (hasGltfLoaded) return;
-
     // Create 3D Saree Showroom Pedestal & Female Model
     const cylinderBuilder = new CylinderGeometryBuilder();
     const coneBuilder = new ConeGeometryBuilder();
@@ -246,6 +242,7 @@ export class DrapeEngineAdapter {
     sareeBody.updateTranslate();
     this.scene.add(sareeBody);
     this.sareeGroup.push(sareeBody);
+    this.sareeBodyMesh = sareeBody;
 
     // ── Saree Gold Zari Border (Lower Hem) ──────────────────────
     const goldZariMat = materialFactory.getMaterialProperties({
@@ -263,6 +260,7 @@ export class DrapeEngineAdapter {
     lowerBorder.updateTranslate();
     this.scene.add(lowerBorder);
     this.sareeGroup.push(lowerBorder);
+    this.borderMesh = lowerBorder;
 
     // ── Torso / Blouse ──────────────────────────────────────────
     const blouseMat = materialFactory.getMaterialProperties({
@@ -280,6 +278,7 @@ export class DrapeEngineAdapter {
     blouse.updateTranslate();
     this.scene.add(blouse);
     this.sareeGroup.push(blouse);
+    this.blouseMesh = blouse;
 
     // ── Pallu Drape (Diagonal Shoulder Drape) ───────────────────
     const palluDrape = new RenderableMeshObject(cylinderBuilder.CylinderData(0.6, 1.3, 32), sareeBodyMat);
@@ -289,6 +288,7 @@ export class DrapeEngineAdapter {
     palluDrape.ObjectRotation();
     this.scene.add(palluDrape);
     this.sareeGroup.push(palluDrape);
+    this.palluDrapeMesh = palluDrape;
 
     // ── Pallu Tail (Shoulder Flow) ──────────────────────────────
     const palluTail = new RenderableMeshObject(cylinderBuilder.CylinderData(0.32, 1.4, 24), goldZariMat);
@@ -298,6 +298,7 @@ export class DrapeEngineAdapter {
     palluTail.ObjectRotation();
     this.scene.add(palluTail);
     this.sareeGroup.push(palluTail);
+    this.palluTailMesh = palluTail;
 
     // ── Mannequin Head & Neck ───────────────────────────────────
     const mannequinMat = materialFactory.getMaterialProperties({
@@ -432,6 +433,104 @@ export class DrapeEngineAdapter {
    */
   resetCamera(): void {
     this.setCameraPreset('front');
+  }
+
+  /**
+   * Updates 3D Saree model PBR materials, colors, sheen, and garment transforms in real-time based on StudioState.
+   */
+  updateCustomization(state: StudioState): void {
+    if (!this.isInitialized) return;
+
+    // 1. Update Saree Body Color & Fabric PBR properties
+    const bodyColor = COLOR_RGB_MAP[state.selectedColor] || [0.18, 0.49, 0.36];
+    const fabricPbr = FABRIC_PBR_MAP[state.selectedFabric] || {
+      metallic: 0.15,
+      roughness: 0.35,
+      specular: 0.8,
+      alpha: 1.0,
+    };
+
+    if (this.sareeBodyMesh) {
+      this.sareeBodyMesh.material.color = bodyColor;
+      this.sareeBodyMesh.material.metallic = fabricPbr.metallic;
+      this.sareeBodyMesh.material.roughness = fabricPbr.roughness;
+      this.sareeBodyMesh.material.specular = fabricPbr.specular;
+      this.sareeBodyMesh.material.alpha = fabricPbr.alpha;
+    }
+
+    if (this.palluDrapeMesh) {
+      this.palluDrapeMesh.material.color = bodyColor;
+      this.palluDrapeMesh.material.metallic = fabricPbr.metallic;
+      this.palluDrapeMesh.material.roughness = fabricPbr.roughness;
+      this.palluDrapeMesh.material.specular = fabricPbr.specular;
+      this.palluDrapeMesh.material.alpha = fabricPbr.alpha;
+    }
+
+    // 2. Update Border Color & Metallic Finish
+    const borderColor = BORDER_COLOR_MAP[state.selectedBorder] || [0.79, 0.66, 0.30];
+    if (this.borderMesh) {
+      this.borderMesh.material.color = borderColor;
+      if (state.selectedBorder === 'gold-zari') {
+        this.borderMesh.material.metallic = 0.85;
+        this.borderMesh.material.roughness = 0.2;
+        this.borderMesh.scale = { x: 1.0, y: 1.0, z: 1.0 };
+      } else if (state.selectedBorder === 'temple') {
+        this.borderMesh.material.metallic = 0.4;
+        this.borderMesh.material.roughness = 0.4;
+        this.borderMesh.scale = { x: 1.04, y: 1.25, z: 1.04 };
+      } else if (state.selectedBorder === 'plain') {
+        this.borderMesh.material.metallic = 0.1;
+        this.borderMesh.material.roughness = 0.6;
+        this.borderMesh.scale = { x: 0.98, y: 0.8, z: 0.98 };
+      } else if (state.selectedBorder === 'floral') {
+        this.borderMesh.material.metallic = 0.5;
+        this.borderMesh.material.roughness = 0.3;
+        this.borderMesh.scale = { x: 1.02, y: 1.1, z: 1.02 };
+      }
+      this.borderMesh.updateScale();
+    }
+
+    // 3. Update Pallu Tail Accent
+    if (this.palluTailMesh) {
+      if (state.selectedPallu === 'zari-rich') {
+        this.palluTailMesh.material.color = [0.82, 0.70, 0.35];
+        this.palluTailMesh.material.metallic = 0.85;
+        this.palluTailMesh.material.roughness = 0.2;
+      } else if (state.selectedPallu === 'classic-pleats') {
+        this.palluTailMesh.material.color = bodyColor;
+        this.palluTailMesh.material.metallic = fabricPbr.metallic;
+        this.palluTailMesh.material.roughness = fabricPbr.roughness;
+      } else if (state.selectedPallu === 'floral-woven') {
+        this.palluTailMesh.material.color = [0.75, 0.45, 0.58];
+        this.palluTailMesh.material.metallic = 0.4;
+        this.palluTailMesh.material.roughness = 0.3;
+      } else if (state.selectedPallu === 'minimal-hem') {
+        this.palluTailMesh.material.color = [0.9, 0.86, 0.8];
+        this.palluTailMesh.material.metallic = 0.1;
+        this.palluTailMesh.material.roughness = 0.5;
+      }
+    }
+
+    // 4. Update Blouse Garment
+    if (this.blouseMesh) {
+      if (state.selectedBlouse === 'contrast-maroon') {
+        this.blouseMesh.material.color = [0.42, 0.11, 0.23];
+        this.blouseMesh.scale = { x: 1.0, y: 1.0, z: 1.0 };
+      } else if (state.selectedBlouse === 'matching') {
+        this.blouseMesh.material.color = bodyColor;
+        this.blouseMesh.scale = { x: 1.0, y: 1.0, z: 1.0 };
+      } else if (state.selectedBlouse === 'golden-embroidered') {
+        this.blouseMesh.material.color = [0.78, 0.65, 0.28];
+        this.blouseMesh.material.metallic = 0.75;
+        this.blouseMesh.scale = { x: 1.02, y: 1.05, z: 1.02 };
+      } else if (state.selectedBlouse === 'velvet-navy') {
+        this.blouseMesh.material.color = [0.10, 0.14, 0.35];
+        this.blouseMesh.material.metallic = 0.1;
+        this.blouseMesh.material.roughness = 0.7;
+        this.blouseMesh.scale = { x: 1.01, y: 1.0, z: 1.01 };
+      }
+      this.blouseMesh.updateScale();
+    }
   }
 
   /**

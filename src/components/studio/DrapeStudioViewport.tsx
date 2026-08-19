@@ -10,9 +10,11 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
 import type { DrapeStudioViewportProps } from '../../types/studio';
 import { DrapeEngineAdapter, type CameraPreset } from '../../engine/DrapeEngineAdapter';
+import { useStudioState } from '../../state/studioState';
 import './DrapeStudioViewport.css';
 
 export function DrapeStudioViewport({ onReady, className = '' }: DrapeStudioViewportProps) {
+  const { state } = useStudioState();
   const engineMountRef = useRef<HTMLDivElement>(null);
   const adapterRef = useRef<DrapeEngineAdapter | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -30,6 +32,8 @@ export function DrapeStudioViewport({ onReady, className = '' }: DrapeStudioView
           onLoaded: () => {
             if (isSubscribed) {
               setIsLoading(false);
+              // Apply initial customization options to WebGL 3D model
+              adapter.updateCustomization(state);
               if (onReady) onReady();
             }
           },
@@ -51,6 +55,13 @@ export function DrapeStudioViewport({ onReady, className = '' }: DrapeStudioView
       }
     };
   }, [onReady]);
+
+  // Reactive 3D PBR Material & Mesh Customization Update
+  useEffect(() => {
+    if (adapterRef.current && !isLoading) {
+      adapterRef.current.updateCustomization(state);
+    }
+  }, [state, isLoading]);
 
   // Camera preset handlers
   const handlePreset = useCallback((preset: CameraPreset) => {
