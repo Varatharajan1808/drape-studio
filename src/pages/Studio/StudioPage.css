@@ -1,31 +1,74 @@
 /* ─────────────────────────────────────────────────────────────
-   Drape Studio — Studio Page
+   Drape Studio — Studio Page (2-Column Sticky Studio Layout)
    ───────────────────────────────────────────────────────────── */
 
 .ds-studio-page {
   padding-bottom: var(--ds-space-16);
 }
 
-/* ── Viewport Section ──────────────────────────────────────── */
-
-.ds-studio-page__viewport {
-  padding: var(--ds-space-6) 0;
+.ds-studio-page__grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-6);
 }
 
-@media (min-width: 768px) {
-  .ds-studio-page__viewport {
-    padding: var(--ds-space-8) 0;
+/* ── Viewport Section ──────────────────────────────────────── */
+
+.ds-studio-page__viewport-col {
+  width: 100%;
+}
+
+.ds-studio-page__sticky-wrapper {
+  width: 100%;
+}
+
+/* ── Desktop Split View (Sticky 3D Canvas + Scrollable Options) ── */
+
+@media (min-width: 1024px) {
+  .ds-studio-page__grid {
+    display: grid;
+    grid-template-columns: 1fr 480px;
+    gap: var(--ds-space-8);
+    align-items: start;
+  }
+
+  .ds-studio-page__viewport-col {
+    position: sticky;
+    top: 96px; /* Below sticky header */
+    height: calc(100vh - 130px);
+    max-height: 820px;
+    min-height: 520px;
+    z-index: 10;
+  }
+
+  .ds-studio-page__sticky-wrapper {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ds-studio-page__sticky-wrapper .ds-viewport {
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 100% !important;
+  }
+
+  .ds-studio-page__customization-col {
+    padding-top: var(--ds-space-2);
   }
 }
 
-/* ── Customization Section ─────────────────────────────────── */
-
-.ds-studio-page__customization {
-  /* section spacing handled by CustomizationPanel.css */
+@media (min-width: 1280px) {
+  .ds-studio-page__grid {
+    grid-template-columns: 1fr 540px;
+    gap: var(--ds-space-12);
+  }
 }
 
 /* ── Actions Section ───────────────────────────────────────── */
 
 .ds-studio-page__actions {
-  margin-top: var(--ds-space-4);
+  margin-top: var(--ds-space-8);
+  padding-top: var(--ds-space-6);
+  border-top: 1px solid var(--ds-color-cream-dark);
 }

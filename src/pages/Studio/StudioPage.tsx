@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// Drape Studio — Studio Page
+// Drape Studio — Studio Page (Sticky 3D Viewport + Customization)
 // ─────────────────────────────────────────────────────────────
 
 import { StudioStateProvider } from '../../state/studioState';
@@ -14,20 +14,22 @@ export function StudioPage() {
     <StudioStateProvider>
       <main className="ds-studio-page">
         <PageContainer>
-          {/* 3D Viewport — Engine Integration Boundary */}
-          <section className="ds-studio-page__viewport">
-            <DrapeStudioViewport />
-          </section>
+          <div className="ds-studio-page__grid">
+            {/* Left Column — Sticky 3D Viewport (Always visible while scrolling options) */}
+            <section className="ds-studio-page__viewport-col">
+              <div className="ds-studio-page__sticky-wrapper">
+                <DrapeStudioViewport />
+              </div>
+            </section>
 
-          {/* Customization Controls */}
-          <section className="ds-studio-page__customization">
-            <CustomizationPanel />
-          </section>
-
-          {/* Actions */}
-          <section className="ds-studio-page__actions">
-            <StudioActions />
-          </section>
+            {/* Right Column — Scrollable Customization Controls */}
+            <section className="ds-studio-page__customization-col">
+              <CustomizationPanel />
+              <div className="ds-studio-page__actions">
+                <StudioActions />
+              </div>
+            </section>
+          </div>
         </PageContainer>
       </main>
     </StudioStateProvider>
